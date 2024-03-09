@@ -10,9 +10,8 @@ profiles:
     affinity_mask: 1
   all:
     name: All
-    description: Performance cores 16-31
+    description: All cores 0-31
     affinity_mask: 1
-    priority: 3
 rules:
   - !PathRule
     path: D:\Games
