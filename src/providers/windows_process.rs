@@ -1,3 +1,5 @@
+use std::thread;
+
 use crate::{
     structs::{Process, ProcessList},
     traits::ProcessManager,
@@ -8,7 +10,7 @@ use wmi::{COMLibrary, WMIConnection};
 #[allow(non_camel_case_types)]
 #[derive(Deserialize, Debug)]
 struct Win32_Process {
-    Name: String,
+    Name: Option<String>,
     ExecutablePath: Option<String>,
     ProcessId: i32,
     Priority: i32,
@@ -26,23 +28,23 @@ impl Into<Process> for Win32_Process {
 
 
 pub struct WindowsProcessManager {
-    wmicon: WMIConnection,
 }
 
 impl WindowsProcessManager {
     pub fn new() -> anyhow::Result<WindowsProcessManager> {
-        let wmicon = WMIConnection::new(COMLibrary::new()?)?;
-
-        Ok(WindowsProcessManager {
-            wmicon,
-        })
+        Ok(WindowsProcessManager {})
     }
 }
 
 impl ProcessManager for WindowsProcessManager {
     fn getProcessList (&self) -> Result<ProcessList, Box<dyn std::error::Error>> {
-        let procs: Vec<Win32_Process> = self.wmicon.query()?;
-        let proclistvec: Vec<Process> = procs.into_iter().map(|p| p.into()).collect();
+        let processes = thread::spawn(|| {
+            let com_con = COMLibrary::new().unwrap();
+            let wmi_con = WMIConnection::new(com_con).unwrap();
+            let processes: Vec<Win32_Process> = wmi_con.query().unwrap();
+            processes
+        }).join().unwrap();
+        let proclistvec: Vec<Process> = processes.into_iter().map(|p| p.into()).collect();
         let proclist = ProcessList::new(proclistvec);
         Ok(proclist)
     }

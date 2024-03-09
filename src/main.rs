@@ -1,3 +1,6 @@
+/* Prevents additional console window on Windows in release */
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
 #![allow(non_snake_case)]
 use dioxus::prelude::*;
 use traits::ProcessManager;
@@ -8,13 +11,12 @@ pub mod providers;
 
 const _TAILWIND_URL: &str = manganis::mg!(file("public/tailwind.css"));
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let process_provider = providers::WindowsProcessManager::new()?;
-    let process_list = process_provider.getProcessList()?;
+fn main() -> () {
+    let process_provider = providers::WindowsProcessManager::new().unwrap();
+    let process_list = process_provider.getProcessList().unwrap();
     dbg!(process_list);
     // launch the dioxus app in a webview
     launch(App);
-    Ok(())
 }
 
 pub fn App() -> Element {
