@@ -3,16 +3,20 @@
 
 #![allow(non_snake_case)]
 use dioxus::prelude::*;
-use traits::ProcessManager;
+use traits::{ConfigManager, ProcessManager};
 
 pub mod traits;
 pub mod structs;
 pub mod providers;
 pub mod components;
 
+
 use components::{DxProcessList, Button};
 
 fn main() -> () {
+    let config_manager = providers::YamlConfigManager::new("config.yaml").unwrap();
+    let config = config_manager.get().unwrap();
+    dbg!(config);
     // launch the dioxus app in a webview
     launch(App);
 }
