@@ -3,9 +3,12 @@ name = "proceso-lasso"
 # Currently supported platforms: web, desktop
 default_platform = "desktop"
 
+
 [web.app]
 title = "Hello"
 
 [web.watcher]
+
+[web.resource]
 
 [web.resource.dev]

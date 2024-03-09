@@ -1,6 +1,6 @@
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Process {
-    pub name: Option<String>,
+    pub name: String,
     pub path: Option<String>,
     pub pid: i32,
     pub priority: i32,

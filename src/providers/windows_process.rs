@@ -10,7 +10,7 @@ use wmi::{COMLibrary, WMIConnection};
 #[allow(non_camel_case_types)]
 #[derive(Deserialize, Debug)]
 struct Win32_Process {
-    Name: Option<String>,
+    Name: String,
     ExecutablePath: Option<String>,
     ProcessId: i32,
     Priority: i32,
@@ -38,6 +38,8 @@ impl WindowsProcessManager {
 
 impl ProcessManager for WindowsProcessManager {
     fn getProcessList (&self) -> Result<ProcessList, Box<dyn std::error::Error>> {
+        // A new thread is required because the Tao library, which Dioxus uses, utilizes the WinAPI COM library.
+        // The WinAPI COM library can only be initialized once per thread, otherwise it panics.
         let processes = thread::spawn(|| {
             let com_con = COMLibrary::new().unwrap();
             let wmi_con = WMIConnection::new(com_con).unwrap();

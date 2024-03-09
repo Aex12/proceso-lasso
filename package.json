@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "",
   "scripts": {
+    "dev:tailwind": "tailwindcss -i ./input.css -o ./public/tailwind.css --watch",
+    "dev:dioxus": "dx serve --platform desktop",
+    "dev": "concurrently \"npm run dev:tailwind\" \"npm run dev:dioxus\"",
     "dev": "concurrently \"tailwindcss -i ./input.css -o ./public/tailwind.css --watch\" \"dx serve --platform desktop\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
