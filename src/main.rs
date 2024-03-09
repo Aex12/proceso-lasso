@@ -10,7 +10,6 @@ pub mod structs;
 pub mod providers;
 pub mod components;
 
-
 use components::{DxProcessList, Button};
 
 fn main() -> () {
@@ -22,15 +21,19 @@ fn main() -> () {
 }
 
 pub fn App() -> Element {
-    let mut count = use_signal(|| 0);
     let process_provider = providers::WindowsProcessManager::new().unwrap();
     let process_list = process_provider.getProcessList().unwrap();
 
     rsx! {
         link { rel: "stylesheet", href: "public/tailwind.css" }
-        h1 { "High-Five counter: {count}" }
-        Button { onclick: move |_| count += 1, "Up high!" }
-        Button { onclick: move |_| count -= 1, "Down low!" }
-        DxProcessList { processes: process_list.processes().clone() }
+        div {
+            class: "w-[97vw] h-[70vh]",
+            DxProcessList { processes: process_list.processes().clone() }
+        }
+        div {
+            class: "flex flex-row space-x-4",
+            Button { onclick: move |_| (), "Stop" }
+            Button { "Reload" }
+        }
     }
 }

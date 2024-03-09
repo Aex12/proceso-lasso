@@ -19,7 +19,7 @@ impl Into<Process> for Win32_Process {
     fn into(self) -> Process {
         Process {
             name: self.Name,
-            path: self.ExecutablePath,
+            path: self.ExecutablePath.map(|p| p.into()),
             pid: self.ProcessId,
             priority: self.Priority,
         }
@@ -31,7 +31,7 @@ pub struct WindowsProcessManager {
 }
 
 impl WindowsProcessManager {
-    pub fn new() -> anyhow::Result<WindowsProcessManager> {
+    pub fn new() -> Result<WindowsProcessManager, Box<dyn std::error::Error>> {
         Ok(WindowsProcessManager {})
     }
 }
@@ -49,5 +49,13 @@ impl ProcessManager for WindowsProcessManager {
         let proclistvec: Vec<Process> = processes.into_iter().map(|p| p.into()).collect();
         let proclist = ProcessList::new(proclistvec);
         Ok(proclist)
+    }
+
+    fn setProcessAffinity (&self, _pid: i32, _affinity: u64) -> Result<(), Box<dyn std::error::Error>> {
+        Ok(())
+    }
+
+    fn setProcessPriority (&self, _pid: i32, _priority: i32) -> Result<(), Box<dyn std::error::Error>> {
+        Ok(())
     }
 }

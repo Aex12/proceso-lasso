@@ -4,13 +4,13 @@ use crate::structs::Process;
 
 #[component]
 pub fn DxProcess (process: Process) -> Element {
+    let path = process.path.map(|p| p.to_str().unwrap().to_owned()).unwrap_or(String::from(""));
     rsx!(
-        div {
-            class: "flex flex-row border p-2 w-full h-fit space-between space-x-2",
-            p { "[{&process.pid}]" }
-            h1 { "{&process.name}" }
-            p { "Priority: {process.priority}" }
-            p { "Path: {&process.path.as_ref().unwrap_or(&String::from(\"\"))}" }
+        tr {
+            td { class: "text-center px-2", "{&process.pid}" }
+            td { "{&process.name}" }
+            td { class: "px-2", "{process.priority}" }
+            td { class: "px-2", "{path}" }
         }
     )
 }
@@ -19,11 +19,21 @@ pub fn DxProcess (process: Process) -> Element {
 pub fn DxProcessList (processes: Vec<Process>) -> Element {
     rsx!(
         div {
-            h1 { class: "text-red-500", "Process List" }
-            div {
-                class: "flex flex-col border m-4 w-[95vw] h-[60vh] overflow-y-scroll overflow-x-auto",
-                for process in processes {
-                    DxProcess { process: process }
+            class: "m-4 max-w-full max-h-full w-full h-full overflow-y-scroll overflow-x-auto",
+            table {
+                class: "table-fixed border",
+                thead {
+                    tr {
+                        th { "PID" }
+                        th { class: "text-left", "Name" }
+                        th { class: "text-left", "Priority" }
+                        th { class: "text-left", "Path" }
+                    }
+                }
+                tbody {
+                    for process in processes {
+                        DxProcess { process: process }
+                    }
                 }
             }
         }
