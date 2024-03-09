@@ -1,2 +1,2 @@
 mod windows_process;
-pub use windows_process::WindowsProcessProvider;
+pub use windows_process::WindowsProcessManager;
