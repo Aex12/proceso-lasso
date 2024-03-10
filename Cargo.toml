@@ -10,6 +10,7 @@ dioxus = { version = "0.5.0-alpha.0", features = ["desktop"] }
 manganis = "0.1.1"
 serde = "1.0"
 serde_yaml = "0.9"
+thiserror = "1.0"
 
 [target.'cfg(windows)'.dependencies]
 windows = { version = "0.54.0", features = ["Win32_System_Threading", "Win32_Foundation"] }

@@ -8,7 +8,9 @@ use serde::{
     Deserialize,
 };
 
-use crate::lasso::{Preset, Rule, Matcher, AffinityMask};
+use crate::process::ProcessManager;
+
+use super::{Preset, Rule, Matcher, AffinityMask};
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Config {
@@ -35,6 +37,22 @@ impl Config {
         if !self.presets.contains_key(&self.default_preset) {
             return Err(format!("Default preset {} does not exist", &self.default_preset));
         }
+        Ok(())
+    }
+
+    pub fn apply (&self, pm: &impl ProcessManager) -> Result<(), Box<dyn std::error::Error>> {
+        let process_list = pm.getProcessList().unwrap();
+        process_list.processes().iter().for_each(|process| {
+            let preset_name: &str = self.find_rule(process).map(|rule| &rule.preset)
+                .unwrap_or_else(|| &self.default_preset);
+            let preset = self.get_preset(preset_name).unwrap();
+            if let Some(affinity) = &preset.affinity {
+                match pm.setProcessAffinity(process.pid, affinity) {
+                    Ok(_) => println!("{}: {} {}", process.name, preset_name, affinity),
+                    Err(e) => println!("Error setting affinity for process {}: {}", process.name, e),
+                }
+            }
+        });
         Ok(())
     }
 }

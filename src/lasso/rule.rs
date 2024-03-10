@@ -8,3 +8,5 @@ pub struct Rule {
     pub preset: String,
     pub description: Option<String>,
 }
+
+pub struct ProcessRuleMatch(pub Rule, pub crate::process::Process);
