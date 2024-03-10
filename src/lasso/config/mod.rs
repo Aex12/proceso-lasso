@@ -1,14 +1,14 @@
 mod manager;
 pub use manager::*;
 
-use std::{collections::{HashMap, HashSet}, path::PathBuf};
+use std::{collections::HashMap, path::PathBuf};
 
 use serde::{
     Serialize,
     Deserialize,
 };
 
-use crate::process::ProcessManager;
+use super::process::ProcessManager;
 
 use super::{Preset, Rule, Matcher, AffinityMask};
 
@@ -24,7 +24,7 @@ impl Config {
         self.presets.get(name)
     }
 
-    pub fn find_rule (&self, process: &crate::process::Process) -> Option<&Rule> {
+    pub fn find_rule (&self, process: &super::process::Process) -> Option<&Rule> {
         self.rules.iter().find(|rule| rule.on.matches(process))
     }
 

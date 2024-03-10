@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 
-use crate::process::Process;
+use crate::lasso::Process;
 
 #[component]
 pub fn DxProcessLine (process: Process, selected: bool, on_click: EventHandler<()>) -> Element {

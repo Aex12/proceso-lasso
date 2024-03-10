@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 
-use crate::process::Process;
+use crate::lasso::Process;
 
 #[component]
 pub fn DxProcessOverview (process: Process) -> Element {

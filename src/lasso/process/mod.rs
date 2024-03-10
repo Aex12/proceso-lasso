@@ -1,6 +1,8 @@
 mod manager;
+mod affinity_mask;
 mod list;
-pub use manager::*;
+pub use manager::ProcessManager;
+pub use affinity_mask::AffinityMask;
 pub use list::ProcessList;
 
 use std::path::PathBuf;

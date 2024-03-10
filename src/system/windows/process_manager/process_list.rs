@@ -3,7 +3,7 @@ use std::thread;
 use serde::Deserialize;
 use wmi::{COMLibrary, WMIConnection};
 
-use crate::process::{Process, ProcessList};
+use crate::lasso::{Process, ProcessList};
 
 #[allow(non_camel_case_types)]
 #[derive(Deserialize, Debug)]

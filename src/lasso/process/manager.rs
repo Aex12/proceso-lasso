@@ -1,7 +1,4 @@
-mod windows;
-pub use windows::WindowsProcessManager;
-
-use crate::lasso::AffinityMask;
+use super::AffinityMask;
 
 use super::ProcessList;
 

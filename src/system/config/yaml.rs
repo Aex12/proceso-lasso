@@ -1,6 +1,6 @@
 use std::fs;
 
-use super::{Config, ConfigManager};
+use crate::lasso::{Config, ConfigManager};
 
 pub struct YamlConfigManager {
     config: Config,

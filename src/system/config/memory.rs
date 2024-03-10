@@ -1,4 +1,4 @@
-use super::{Config, ConfigManager};
+use crate::lasso::{Config, ConfigManager};
 
 pub struct MemoryConfigManager {
     config: Config,

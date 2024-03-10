@@ -1,9 +1,7 @@
 mod process_list;
 mod affinity;
 
-use crate::lasso::AffinityMask;
-use super::super::ProcessList;
-use super::ProcessManager;
+use crate::lasso::{ProcessManager, ProcessList, AffinityMask};
 
 use process_list::getProcessList;
 use affinity::setProcessAffinity;

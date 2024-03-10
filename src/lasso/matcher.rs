@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
 
-use crate::process::Process;
+use super::process::Process;
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum Matcher {
@@ -16,4 +16,9 @@ impl Matcher {
             Matcher::Name(n) => process.name == *n,
         }
     }
+}
+
+pub struct ProcessMatch {
+    pub process: Process,
+    pub matcher: Option<Matcher>,
 }
