@@ -14,7 +14,7 @@ use crate::lasso::{Preset, Rule, Matcher, AffinityMask};
 pub struct Config {
     pub presets: HashMap<String, Preset>,
     pub rules: Vec<Rule>,
-    pub default_preset: Option<String>,
+    pub default_preset: String,
 }
 
 impl Config {
@@ -26,20 +26,14 @@ impl Config {
         self.rules.iter().find(|rule| rule.on.matches(process))
     }
 
-    pub fn get_preset_for_process (&self, process: &crate::process::Process) -> Option<&Preset> {
-        self.find_rule(process).and_then(|rule| self.get_preset(&rule.preset))
-    }
-
     pub fn validate (&self) -> Result<(), String> {
         for rule in &self.rules {
             if !self.presets.contains_key(&rule.preset) {
                 return Err(format!("Rule {:?} references non-existent preset {}", rule, rule.preset));
             }
         }
-        if let Some(preset) = &self.default_preset {
-            if !self.presets.contains_key(preset) {
-                return Err(format!("Default preset {} does not exist", preset));
-            }
+        if !self.presets.contains_key(&self.default_preset) {
+            return Err(format!("Default preset {} does not exist", &self.default_preset));
         }
         Ok(())
     }
@@ -52,7 +46,7 @@ impl Default for Config {
             String::from("Cache"),
             Preset {
                 description: Some(String::from("Uses cache cores 0-15 (best for gaming)")),
-                affinity_mask: Some(AffinityMask(0x0000FFFF)),
+                affinity: Some(AffinityMask(0x0000FFFF)),
                 ..Preset::default()
             },
         );
@@ -60,7 +54,7 @@ impl Default for Config {
             String::from("Performance"),
             Preset {
                 description: Some(String::from("Uses performance cores 16-31 (best for productivity)")),
-                affinity_mask: Some(AffinityMask(0xFFFF0000)),
+                affinity: Some(AffinityMask(0xFFFF0000)),
                 ..Preset::default()
             },
         );
@@ -68,7 +62,7 @@ impl Default for Config {
             String::from("All"),
             Preset {
                 description: Some(String::from("Uses all cores 0-31")),
-                affinity_mask: Some(AffinityMask(0xFFFFFFFF)),
+                affinity: Some(AffinityMask(0xFFFFFFFF)),
                 ..Preset::default()
             },
         );
@@ -90,7 +84,7 @@ impl Default for Config {
             },
         ];
         Config {
-            default_preset: Some(String::from("performance")),
+            default_preset: String::from("Performance"),
             presets,
             rules,
         }

@@ -1,3 +1,5 @@
+use std::fmt;
+
 use serde::{
     Serialize,
     Deserialize,
@@ -5,6 +7,12 @@ use serde::{
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct AffinityMask(pub u64);
+
+impl fmt::Display for AffinityMask {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{:08X}", self.0)
+    }
+}
 
 impl Serialize for AffinityMask {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>

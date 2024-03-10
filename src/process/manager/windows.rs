@@ -1,5 +1,7 @@
 use std::thread;
 
+use crate::lasso::AffinityMask;
+
 use super::super::{Process, ProcessList};
 use super::ProcessManager;
 use serde::Deserialize;
@@ -49,7 +51,7 @@ impl ProcessManager for WindowsProcessManager {
         Ok(proclist)
     }
 
-    fn setProcessAffinity (&self, _pid: i32, _affinity: u64) -> Result<(), Box<dyn std::error::Error>> {
+    fn setProcessAffinity (&self, _pid: i32, _affinity: &AffinityMask) -> Result<(), Box<dyn std::error::Error>> {
         Ok(())
     }
 
