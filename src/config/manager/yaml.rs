@@ -1,23 +1,24 @@
 use std::fs;
 
-use super::{LassoConfig, ConfigManager};
+use super::{Config, ConfigManager};
 
 pub struct YamlConfigManager {
-    config: LassoConfig,
+    config: Config,
     config_path: String,
 }
 
 impl YamlConfigManager {
     pub fn new (config_path: &str) -> YamlConfigManager {
         YamlConfigManager {
-            config: Self::read_from_file(config_path).unwrap_or_else(|_| LassoConfig::default()),
+            config: Self::read_from_file(config_path).unwrap_or_else(|_| Config::default()),
             config_path: config_path.to_string(),
         }
     }
 
-    pub fn read_from_file (config_path: &str) -> Result<LassoConfig, Box<dyn std::error::Error>> {
+    pub fn read_from_file (config_path: &str) -> Result<Config, Box<dyn std::error::Error>> {
         let yaml = fs::read_to_string(config_path)?;
-        let config: LassoConfig = serde_yaml::from_str(&yaml).unwrap();
+        let config: Config = serde_yaml::from_str(&yaml).unwrap();
+        config.validate().unwrap();
         Ok(config)
     }
 
@@ -29,17 +30,19 @@ impl YamlConfigManager {
 }
 
 impl ConfigManager for YamlConfigManager {
-    fn get (&self) -> Result<LassoConfig, Box<dyn std::error::Error>> {
+    fn get (&self) -> Result<Config, Box<dyn std::error::Error>> {
         Ok(self.config.clone())
     }
 
-    fn put (&mut self, config: LassoConfig) -> Result<(), Box<dyn std::error::Error>> {
+    fn put (&mut self, config: Config) -> Result<(), Box<dyn std::error::Error>> {
         self.config = config;
         self.write_to_file()
     }
 
     fn load (&mut self) -> Result<(), Box<dyn std::error::Error>> {
-        self.config = Self::read_from_file(&self.config_path)?;
+        let config = Self::read_from_file(&self.config_path)?;
+        config.validate().unwrap();
+        self.config = config;
         Ok(())
     }
 }

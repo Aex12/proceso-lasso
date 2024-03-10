@@ -1,7 +1,7 @@
 mod manager;
 pub use manager::*;
 
-use std::path::PathBuf;
+use std::{collections::HashMap, path::PathBuf};
 
 use serde::{
     Serialize,
@@ -11,34 +11,67 @@ use serde::{
 use crate::lasso::{Preset, Rule, Matcher, AffinityMask};
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
-pub struct LassoConfig {
-    pub presets: Vec<Preset>,
+pub struct Config {
+    pub presets: HashMap<String, Preset>,
     pub rules: Vec<Rule>,
     pub default_preset: Option<String>,
 }
 
-impl Default for LassoConfig {
-    fn default () -> LassoConfig {
-        let presets: Vec<Preset> = vec![
+impl Config {
+    pub fn get_preset (&self, name: &str) -> Option<&Preset> {
+        self.presets.get(name)
+    }
+
+    pub fn find_rule (&self, process: &crate::process::Process) -> Option<&Rule> {
+        self.rules.iter().find(|rule| rule.on.matches(process))
+    }
+
+    pub fn get_preset_for_process (&self, process: &crate::process::Process) -> Option<&Preset> {
+        self.find_rule(process).and_then(|rule| self.get_preset(&rule.preset))
+    }
+
+    pub fn validate (&self) -> Result<(), String> {
+        for rule in &self.rules {
+            if !self.presets.contains_key(&rule.preset) {
+                return Err(format!("Rule {:?} references non-existent preset {}", rule, rule.preset));
+            }
+        }
+        if let Some(preset) = &self.default_preset {
+            if !self.presets.contains_key(preset) {
+                return Err(format!("Default preset {} does not exist", preset));
+            }
+        }
+        Ok(())
+    }
+}
+
+impl Default for Config {
+    fn default () -> Config {
+        let mut presets: HashMap<String, Preset> = HashMap::new();
+        presets.insert(
+            String::from("Cache"),
             Preset {
-                name: Some(String::from("Cache")),
                 description: Some(String::from("Uses cache cores 0-15 (best for gaming)")),
                 affinity_mask: Some(AffinityMask(0x0000FFFF)),
                 ..Preset::default()
             },
+        );
+        presets.insert(
+            String::from("Performance"),
             Preset {
-                name: Some(String::from("Performance")),
                 description: Some(String::from("Uses performance cores 16-31 (best for productivity)")),
                 affinity_mask: Some(AffinityMask(0xFFFF0000)),
                 ..Preset::default()
             },
+        );
+        presets.insert(
+            String::from("All"),
             Preset {
-                name: Some(String::from("All")),
                 description: Some(String::from("Uses all cores 0-31")),
                 affinity_mask: Some(AffinityMask(0xFFFFFFFF)),
                 ..Preset::default()
             },
-        ];
+        );
         let rules: Vec<Rule> = vec![
             Rule {
                 on: Matcher::Path(PathBuf::from("C:\\Program Files\\Steam\\steamapps\\common")),
@@ -56,7 +89,7 @@ impl Default for LassoConfig {
                 description: Some(String::from("Matches all processes in your games folder"))
             },
         ];
-        LassoConfig {
+        Config {
             default_preset: Some(String::from("performance")),
             presets,
             rules,
