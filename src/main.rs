@@ -9,6 +9,7 @@ use process::{ProcessManager, WindowsProcessManager};
 pub mod components;
 pub mod config;
 pub mod process;
+pub mod lasso;
 
 use components::{DxProcessList, Button};
 
