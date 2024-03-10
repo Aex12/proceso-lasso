@@ -6,7 +6,7 @@ use serde::{
 };
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct AffinityMask(pub u64);
+pub struct AffinityMask(pub usize);
 
 impl fmt::Display for AffinityMask {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -29,7 +29,7 @@ impl<'de> Deserialize<'de> for AffinityMask {
         D: serde::Deserializer<'de>,
     {
         let s = String::deserialize(deserializer)?;
-        let u = u64::from_str_radix(&s, 16).map_err(serde::de::Error::custom)?;
+        let u = usize::from_str_radix(&s, 16).map_err(serde::de::Error::custom)?;
         Ok(AffinityMask(u))
     }
 }
