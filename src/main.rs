@@ -3,17 +3,17 @@
 
 #![allow(non_snake_case)]
 use dioxus::prelude::*;
-use traits::{ConfigManager, ProcessManager};
+use config::{ConfigManager, YamlConfigManager};
+use process::{ProcessManager, WindowsProcessManager};
 
-pub mod traits;
-pub mod structs;
-pub mod providers;
 pub mod components;
+pub mod config;
+pub mod process;
 
 use components::{DxProcessList, Button};
 
 fn main() -> () {
-    let mut config_manager = providers::YamlConfigManager::new("config.yaml");
+    let mut config_manager = YamlConfigManager::new("config.yaml");
     let config = config_manager.get().unwrap();
     // put after get to ensure the file is created if it doesn't exist
     config_manager.put(config.clone()).unwrap();
@@ -23,7 +23,7 @@ fn main() -> () {
 }
 
 pub fn App() -> Element {
-    let process_provider = providers::WindowsProcessManager::new().unwrap();
+    let process_provider = WindowsProcessManager::new().unwrap();
     let process_list = process_provider.getProcessList().unwrap();
 
     rsx! {

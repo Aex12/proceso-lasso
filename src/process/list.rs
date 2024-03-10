@@ -1,12 +1,4 @@
-use std::path::PathBuf;
-
-#[derive(Debug, Clone, PartialEq)]
-pub struct Process {
-    pub name: String,
-    pub path: Option<PathBuf>,
-    pub pid: i32,
-    pub priority: i32,
-}
+use super::Process;
 
 #[derive(Debug)]
 pub struct ProcessList {

@@ -1,9 +1,7 @@
 use std::thread;
 
-use crate::{
-    structs::{Process, ProcessList},
-    traits::ProcessManager,
-};
+use super::super::{Process, ProcessList};
+use super::ProcessManager;
 use serde::Deserialize;
 use wmi::{COMLibrary, WMIConnection};
 

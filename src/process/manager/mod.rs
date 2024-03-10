@@ -1,4 +1,7 @@
-use crate::structs::ProcessList;
+mod windows;
+pub use windows::WindowsProcessManager;
+
+use super::ProcessList;
 
 pub trait ProcessManager {
     fn getProcessList (&self) -> Result<ProcessList, Box<dyn std::error::Error>>;

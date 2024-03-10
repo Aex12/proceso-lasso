@@ -1,29 +1,29 @@
-use crate::{structs::PLConfig, traits::ConfigManager};
+use super::{LassoConfig, ConfigManager};
 
 pub struct MemoryConfigManager {
-    config: PLConfig,
+    config: LassoConfig,
 }
 
 impl MemoryConfigManager {
     pub fn new () -> MemoryConfigManager {
         MemoryConfigManager {
-            config: PLConfig::default(),
+            config: LassoConfig::default(),
         }
     }
 }
 
 impl ConfigManager for MemoryConfigManager {
-    fn get (&self) -> Result<PLConfig, Box<dyn std::error::Error>> {
+    fn get (&self) -> Result<LassoConfig, Box<dyn std::error::Error>> {
         Ok(self.config.clone())
     }
 
-    fn put (&mut self, config: PLConfig) -> Result<(), Box<dyn std::error::Error>> {
+    fn put (&mut self, config: LassoConfig) -> Result<(), Box<dyn std::error::Error>> {
         self.config = config;
         Ok(())
     }
 
     fn load (&mut self) -> Result<(), Box<dyn std::error::Error>> {
-        self.config = PLConfig::default();
+        self.config = LassoConfig::default();
         Ok(())
     }
 }

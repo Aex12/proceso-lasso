@@ -5,7 +5,6 @@ use serde::{
     Deserialize,
 };
 
-
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct LassoPreset {
     pub name: Option<String>,
@@ -39,14 +38,14 @@ pub struct LassoRule {
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
-pub struct PLConfig {
+pub struct LassoConfig {
     pub default_preset: Option<String>,
     pub presets: HashMap<String, LassoPreset>,
     pub rules: Vec<LassoRule>,
 }
 
-impl Default for PLConfig {
-    fn default () -> PLConfig {
+impl Default for LassoConfig {
+    fn default () -> LassoConfig {
         let rules: Vec<LassoRule> = vec![
             LassoRule {
                 on: LassoMatcher::Path(String::from("C:\\Program Files\\Steam\\steamapps\\common")),
@@ -83,7 +82,7 @@ impl Default for PLConfig {
             affinity_mask: Some(0xFFFFFFFF),
             ..LassoPreset::default()
         });
-        PLConfig {
+        LassoConfig {
             default_preset: Some(String::from("performance")),
             presets,
             rules,
