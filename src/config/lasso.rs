@@ -5,11 +5,13 @@ use serde::{
     Deserialize,
 };
 
+use super::AffinityMask;
+
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct LassoPreset {
     pub name: Option<String>,
     pub description: Option<String>,
-    pub affinity_mask: Option<usize>,
+    pub affinity_mask: Option<AffinityMask>,
     pub priority: Option<usize>,
 }
 
@@ -67,19 +69,19 @@ impl Default for LassoConfig {
         presets.insert(String::from("cache"), LassoPreset {
             name: Some(String::from("Cache")),
             description: Some(String::from("Uses cache cores 0-15 (best for gaming)")),
-            affinity_mask: Some(0x0000FFFF),
+            affinity_mask: Some(AffinityMask(0x0000FFFF)),
             ..LassoPreset::default()
         });
         presets.insert(String::from("performance"), LassoPreset {
             name: Some(String::from("Performance")),
             description: Some(String::from("Uses performance cores 16-31 (best for productivity)")),
-            affinity_mask: Some(0xFFFF0000),
+            affinity_mask: Some(AffinityMask(0xFFFF0000)),
             ..LassoPreset::default()
         });
         presets.insert(String::from("all"), LassoPreset {
             name: Some(String::from("All")),
             description: Some(String::from("Uses all cores 0-31")),
-            affinity_mask: Some(0xFFFFFFFF),
+            affinity_mask: Some(AffinityMask(0xFFFFFFFF)),
             ..LassoPreset::default()
         });
         LassoConfig {

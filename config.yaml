@@ -1,19 +1,19 @@
 default_preset: performance
 presets:
-  cache:
-    name: Cache
-    description: Uses cache cores 0-15 (best for gaming)
-    affinity_mask: 65535
-    priority: null
   performance:
     name: Performance
     description: Uses performance cores 16-31 (best for productivity)
-    affinity_mask: 4294901760
+    affinity_mask: FFFF0000
     priority: null
   all:
     name: All
     description: Uses all cores 0-31
-    affinity_mask: 4294967295
+    affinity_mask: FFFFFFFF
+    priority: null
+  cache:
+    name: Cache
+    description: Uses cache cores 0-15 (best for gaming)
+    affinity_mask: 0000FFFF
     priority: null
 rules:
 - on: !Path C:\Program Files\Steam\steamapps\common
