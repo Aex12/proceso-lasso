@@ -1,18 +1,27 @@
-default_profile: performance
-profiles:
+default_preset: performance
+presets:
   cache:
     name: Cache
-    description: Cache cores 0-15
-    affinity_mask: 1
+    description: Uses cache cores 0-15 (best for gaming)
+    affinity_mask: 65535
+    priority: null
   performance:
     name: Performance
-    description: Performance cores 16-31
-    affinity_mask: 1
+    description: Uses performance cores 16-31 (best for productivity)
+    affinity_mask: 4294901760
+    priority: null
   all:
     name: All
-    description: All cores 0-31
-    affinity_mask: 1
+    description: Uses all cores 0-31
+    affinity_mask: 4294967295
+    priority: null
 rules:
-  - !PathRule
-    path: D:\Games
-    profile: cache
+- on: !Path C:\Program Files\Steam\steamapps\common
+  preset: cache
+  description: Matches all processes in the Steam common folder
+- on: !Path D:\SteamLibrary\steamapps\common
+  preset: cache
+  description: Matches all processes in an external Steam library
+- on: !Path D:\Games
+  preset: cache
+  description: Matches all processes in your games folder

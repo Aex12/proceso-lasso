@@ -7,10 +7,10 @@ pub fn DxProcess (process: Process) -> Element {
     let path = process.path.map(|p| p.to_str().unwrap().to_owned()).unwrap_or(String::from(""));
     rsx!(
         tr {
-            td { class: "text-center px-2", "{&process.pid}" }
-            td { "{&process.name}" }
-            td { class: "px-2", "{process.priority}" }
-            td { class: "px-2", "{path}" }
+            td { class: "text-center px-2 border", "{&process.pid}" }
+            td { class: "border", "{&process.name}" }
+            td { class: "px-2 border", "{process.priority}" }
+            td { class: "px-2 border", "{path}" }
         }
     )
 }

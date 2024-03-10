@@ -13,8 +13,10 @@ pub mod components;
 use components::{DxProcessList, Button};
 
 fn main() -> () {
-    let config_manager = providers::YamlConfigManager::new("config.yaml").unwrap();
+    let mut config_manager = providers::YamlConfigManager::new("config.yaml");
     let config = config_manager.get().unwrap();
+    // put after get to ensure the file is created if it doesn't exist
+    config_manager.put(config.clone()).unwrap();
     dbg!(config);
     // launch the dioxus app in a webview
     launch(App);
