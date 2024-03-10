@@ -3,12 +3,11 @@ use serde::{Deserialize, Serialize};
 
 use crate::process::Process;
 
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum Matcher {
     Path(PathBuf),
     Name(String),
 }
-
 
 impl Matcher {
     pub fn matches (&self, process: &Process) -> bool {

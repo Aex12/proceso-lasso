@@ -1,15 +1,15 @@
 presets:
-  Cache:
-    description: Uses cache cores 0-15 (best for gaming)
-    affinity: FFFF
+  Performance:
+    description: Uses performance cores 16-31 (best for productivity)
+    affinity: FFFF0000
     priority: null
   All:
     description: Uses all cores 0-31
     affinity: FFFFFFFF
     priority: null
-  Performance:
-    description: Uses performance cores 16-31 (best for productivity)
-    affinity: FFFF0000
+  Cache:
+    description: Uses cache cores 0-15 (best for gaming)
+    affinity: FFFF
     priority: null
 rules:
 - on: !Path C:\Program Files\Steam\steamapps\common

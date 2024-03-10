@@ -1,7 +1,7 @@
 mod manager;
 pub use manager::*;
 
-use std::{collections::HashMap, path::PathBuf};
+use std::{collections::{HashMap, HashSet}, path::PathBuf};
 
 use serde::{
     Serialize,
@@ -36,6 +36,13 @@ impl Config {
         }
         if !self.presets.contains_key(&self.default_preset) {
             return Err(format!("Default preset {} does not exist", &self.default_preset));
+        }
+        let mut seen_rules: HashMap<&Rule, ()> = HashMap::new();
+        for rule in &self.rules {
+            if seen_rules.contains_key(rule) {
+                return Err(format!("Duplicate rule {:?}", rule));
+            }
+            seen_rules.insert(rule, ());
         }
         Ok(())
     }

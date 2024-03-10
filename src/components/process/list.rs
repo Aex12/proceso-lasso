@@ -3,17 +3,12 @@ use dioxus::prelude::*;
 use crate::process::Process;
 
 #[component]
-pub fn DxProcessLine (process: Process, selected_process: Signal<Option<Process>>) -> Element {
+pub fn DxProcessLine (process: Process, selected: bool, on_click: EventHandler<()>) -> Element {
     let path = process.path.clone().map(|p| p.to_str().unwrap().to_owned()).unwrap_or(String::from(""));
-    let is_selected = use_memo(move || selected_process().as_ref().map(|p| p.pid == process.pid).unwrap_or(false));
-    let tr_class = use_memo(move || if is_selected() { "bg-gray-600 text-white cursor-pointer" } else { "cursor-pointer" });
     rsx!(
         tr {
-            onclick: move |_| {
-                println!("clicked");
-                *selected_process.write() = if is_selected() { None } else { Some(process.clone()) };
-            },
-            class: tr_class,
+            onclick: move |_| on_click.call(()),
+            class: if selected { "bg-gray-600 text-white cursor-pointer" } else { "cursor-pointer" },
             td { class: "text-center px-2 border", "{&process.pid}" }
             td { class: "border", "{&process.name}" }
             td { class: "px-2 border", "{process.priority}" }
@@ -31,7 +26,6 @@ pub fn DxProcessList (processes: Signal<Vec<Process>>, selected_process: Signal<
             term @ _ => processes.read().iter().filter(|p| p.name.contains(term)).cloned().collect(),
         }
     });
-    println!("rendered process list");
 
     rsx!(div {
         class: "max-w-full max-h-full w-full h-full flex flex-col",
@@ -49,7 +43,14 @@ pub fn DxProcessList (processes: Signal<Vec<Process>>, selected_process: Signal<
                 }
                 tbody {
                     for process in filtered_processes.read().clone() {
-                        DxProcessLine { process: process, selected_process: selected_process }
+                        DxProcessLine {
+                            selected: selected_process.read().as_ref().map(|p| p.pid).unwrap_or(-1) == process.pid,
+                            process: process.clone(),
+                            on_click: move |_| {
+                                let selected = selected_process.read().as_ref().map(|p| p.pid).unwrap_or(-1) == process.pid;
+                                *selected_process.write() = if selected { None } else { Some(process.clone()) };
+                            }
+                        }
                     }
                 }
             }
