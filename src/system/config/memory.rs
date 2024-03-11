@@ -1,29 +1,24 @@
-use crate::lasso::{Config, ConfigManager};
+use super::{Config, ConfigStore};
 
-pub struct MemoryConfigManager {
+pub struct MemoryConfigStore {
     config: Config,
 }
 
-impl MemoryConfigManager {
-    pub fn new () -> MemoryConfigManager {
-        MemoryConfigManager {
+impl MemoryConfigStore {
+    pub fn new () -> MemoryConfigStore {
+        MemoryConfigStore {
             config: Config::default(),
         }
     }
 }
 
-impl ConfigManager for MemoryConfigManager {
+impl ConfigStore for MemoryConfigStore {
     fn get (&self) -> Result<Config, Box<dyn std::error::Error>> {
         Ok(self.config.clone())
     }
 
     fn put (&mut self, config: Config) -> Result<(), Box<dyn std::error::Error>> {
         self.config = config;
-        Ok(())
-    }
-
-    fn load (&mut self) -> Result<(), Box<dyn std::error::Error>> {
-        self.config = Config::default();
         Ok(())
     }
 }

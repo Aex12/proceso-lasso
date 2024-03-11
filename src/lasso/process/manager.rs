@@ -9,8 +9,8 @@ pub trait ProcessManager {
     fn setProcessPriority (&self, pid: i32, priority: i32) -> Result<(), Box<dyn std::error::Error>>;
     fn apply (&self, config: &Config) -> Result<(), Box<dyn std::error::Error>> {
         let process_list = self.getProcessList().unwrap();
-        process_list.processes().iter().for_each(|process| {
-            let (preset_name, preset) = config.find_preset(process);
+        process_list.into_iter().for_each(|process| {
+            let (preset_name, preset) = config.find_preset(&process);
             if let Some(affinity) = &preset.affinity {
                 match self.setProcessAffinity(process.pid, affinity) {
                     Ok(_) => println!("{}: {} {}", process.name, preset_name, affinity),

@@ -1,5 +1,3 @@
-mod manager;
-pub use manager::*;
 use thiserror::Error;
 
 use std::collections::HashSet;
@@ -65,8 +63,12 @@ impl Config {
     }
 
     
-    pub fn find_rule <T: Matchable> (& self, target: &T) -> Option<&Rule> {
+    pub fn find_rule <T: Matchable> (&self, target: &T) -> Option<&Rule> {
         self.rules.iter().find(|rule| rule.matches(target))
+    }
+
+    pub fn find_rules <'s, 't, T: Matchable> (&'s self, target: std::slice::Iter<'_, &'t T>) -> Vec<(&'t T, Option<&'s Rule>)> {
+        target.map(|t| (*t, self.find_rule(*t))).collect()
     }
 
     pub fn find_preset <T: Matchable> (&self, target: &T) -> (&str, &Preset) {

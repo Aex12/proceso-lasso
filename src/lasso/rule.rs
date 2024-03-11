@@ -38,11 +38,7 @@ impl PartialEq for Rule {
     }
 }
 
-impl Eq for Rule {
-    fn assert_receiver_is_total_eq(&self) {
-        // This is a no-op, but it's required because `Eq` is a marker trait.
-    }
-}
+impl Eq for Rule {}
 
 impl Hash for Rule {
     fn hash<H: Hasher>(&self, state: &mut H) {
