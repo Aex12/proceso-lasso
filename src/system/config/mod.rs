@@ -13,7 +13,7 @@ pub trait ConfigStore {
 
 pub fn create_config_store (store: &str, path: &str) -> Box<dyn ConfigStore> {
     match store {
-        "yaml" => Box::new(YamlConfigStore::new(path)),
+        "yaml" => Box::new(YamlConfigStore::new(path.to_string())),
         "memory" => Box::new(MemoryConfigStore::new()),
         _ => panic!("Invalid config store type"),
     }
