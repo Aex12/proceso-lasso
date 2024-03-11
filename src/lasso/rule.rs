@@ -1,14 +1,35 @@
 
-use std::hash::{Hash, Hasher};
+use std::{fmt::Display, hash::{Hash, Hasher}};
 
 use serde::{Deserialize, Serialize};
-use super::Matcher;
+use super::{Matchable, Matcher};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Rule {
     pub on: Matcher,
     pub preset: String,
     pub description: Option<String>,
+}
+
+impl Rule {
+    pub fn new (on: Matcher, preset: String, description: Option<String>) -> Rule {
+        Rule {
+            on,
+            preset,
+            description,
+        }
+    }
+
+    #[inline]
+    pub fn matches <T: Matchable> (&self, target: &T) -> bool {
+        target.matches(&self.on)
+    }
+}
+
+impl Display for Rule {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}", self)
+    }
 }
 
 impl PartialEq for Rule {

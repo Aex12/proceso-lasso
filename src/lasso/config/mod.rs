@@ -1,6 +1,8 @@
 mod manager;
 pub use manager::*;
+use thiserror::Error;
 
+use std::collections::HashSet;
 use std::{collections::HashMap, path::PathBuf};
 
 use serde::{
@@ -8,9 +10,7 @@ use serde::{
     Deserialize,
 };
 
-use super::process::ProcessManager;
-
-use super::{Preset, Rule, Matcher, AffinityMask};
+use super::{AffinityMask, Matchable, Matcher, Preset, Rule};
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Config {
@@ -19,48 +19,63 @@ pub struct Config {
     pub default_preset: String,
 }
 
+#[derive(Error, Debug)]
+pub enum ConfigValidationError {
+    #[error("Default preset couldnt be found {0}")]
+    NonExistentDefaultPreset(String),
+    #[error("Rule points to non-existent preset {0}")]
+    NonExistentPreset(Rule),
+    #[error("Duplicate rule at index {0} {1} {2}")]
+    DuplicateRule(usize, Rule, Rule),
+}
+
 impl Config {
     pub fn get_preset (&self, name: &str) -> Option<&Preset> {
         self.presets.get(name)
     }
 
-    pub fn find_rule (&self, process: &super::process::Process) -> Option<&Rule> {
-        self.rules.iter().find(|rule| rule.on.matches(process))
-    }
-
-    pub fn validate (&self) -> Result<(), String> {
-        for rule in &self.rules {
-            if !self.presets.contains_key(&rule.preset) {
-                return Err(format!("Rule {:?} references non-existent preset {}", rule, rule.preset));
-            }
-        }
+    pub fn validate_default_preset (&self) -> Result<(), ConfigValidationError> {
         if !self.presets.contains_key(&self.default_preset) {
-            return Err(format!("Default preset {} does not exist", &self.default_preset));
+            return Err(ConfigValidationError::NonExistentDefaultPreset(self.default_preset.clone()));
         }
-        let mut seen_rules: HashMap<&Rule, ()> = HashMap::new();
-        for rule in &self.rules {
-            if seen_rules.contains_key(rule) {
-                return Err(format!("Duplicate rule {:?}", rule));
+        Ok(())
+    }
+    
+    pub fn validate_rules (&self) -> Result<(), ConfigValidationError> {
+        let mut seen_rules: HashSet<&Rule> = HashSet::new();
+        
+        for (index, rule) in self.rules.iter().enumerate() {
+            if !self.presets.contains_key(&rule.preset) {
+                return Err(ConfigValidationError::NonExistentPreset(rule.clone()));
             }
-            seen_rules.insert(rule, ());
+            if seen_rules.contains(rule) {
+                let prev_rule = seen_rules.get(rule).unwrap();
+                let prev_rule = (*prev_rule).clone();
+                return Err(ConfigValidationError::DuplicateRule(index, rule.clone(), prev_rule));
+            }
+            seen_rules.insert(rule);
         }
         Ok(())
     }
 
-    pub fn apply (&self, pm: &impl ProcessManager) -> Result<(), Box<dyn std::error::Error>> {
-        let process_list = pm.getProcessList().unwrap();
-        process_list.processes().iter().for_each(|process| {
-            let preset_name: &str = self.find_rule(process).map(|rule| &rule.preset)
-                .unwrap_or_else(|| &self.default_preset);
-            let preset = self.get_preset(preset_name).unwrap();
-            if let Some(affinity) = &preset.affinity {
-                match pm.setProcessAffinity(process.pid, affinity) {
-                    Ok(_) => println!("{}: {} {}", process.name, preset_name, affinity),
-                    Err(e) => println!("Error setting affinity for process {}: {}", process.name, e),
-                }
-            }
-        });
+    pub fn validate (&self) -> Result<(), ConfigValidationError> {
+        self.validate_default_preset()?;
+        self.validate_rules()?;
         Ok(())
+    }
+
+    
+    pub fn find_rule <T: Matchable> (& self, target: &T) -> Option<&Rule> {
+        self.rules.iter().find(|rule| rule.matches(target))
+    }
+
+    pub fn find_preset <T: Matchable> (&self, target: &T) -> (&str, &Preset) {
+        let preset_name: &str = self.find_rule(target)
+                .map(|rule| &rule.preset)
+                .unwrap_or_else(|| &self.default_preset);
+
+        let preset = self.get_preset(preset_name).unwrap();
+        (preset_name, preset)
     }
 }
 

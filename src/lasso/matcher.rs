@@ -9,12 +9,14 @@ pub enum Matcher {
     Name(String),
 }
 
+pub trait Matchable {
+    fn matches (&self, matcher: &Matcher) -> bool;
+}
+
 impl Matcher {
-    pub fn matches (&self, process: &Process) -> bool {
-        match self {
-            Matcher::Path(p) => process.path.as_ref().map(|path| path.starts_with(p)).unwrap_or(false),
-            Matcher::Name(n) => process.name == *n,
-        }
+    #[inline]
+    pub fn matches <T: Matchable> (&self, target: &T) -> bool {
+        target.matches(self)
     }
 }
 

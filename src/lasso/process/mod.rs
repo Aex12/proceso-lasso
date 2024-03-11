@@ -7,12 +7,36 @@ pub use list::ProcessList;
 
 use std::path::PathBuf;
 
+use super::{Matchable, Matcher};
+
 #[derive(Debug, Clone)]
 pub struct Process {
+    pub pid: i32,
     pub name: String,
     pub path: Option<PathBuf>,
-    pub pid: i32,
     pub priority: i32,
+}
+
+impl Process {
+    pub fn new (pid: i32, name: String, path: Option<PathBuf>, priority: i32) -> Self {
+        Process {
+            name,
+            path,
+            pid,
+            priority,
+        }
+    }
+}
+
+impl Matchable for Process {
+    #[inline]
+    fn matches (&self, matcher: &Matcher) -> bool {
+        match matcher {
+            Matcher::Path(p) => self.path.as_ref().map(|path| path.starts_with(p)).unwrap_or(false),
+            Matcher::Name(n) => self.name == *n,
+        }
+    }
+
 }
 
 impl PartialEq for Process {

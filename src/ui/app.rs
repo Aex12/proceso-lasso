@@ -10,6 +10,7 @@ pub fn App() -> Element {
     let process_list = process_provider.getProcessList().unwrap();
     let processes: Signal<Vec<Process>> = use_signal(|| process_list.processes().clone());
     let selected_process: Signal<Option<Process>> = use_signal(|| None);
+    let process_is_selected: ReadOnlySignal<bool> = use_memo(move || selected_process.read().as_ref().is_some());
 
     rsx! {
         link { rel: "stylesheet", href: "public/tailwind.css" }
@@ -20,11 +21,13 @@ pub fn App() -> Element {
                 DxProcessList { processes, selected_process }
             }
             div {
-                class: "flex flex-row space-x-4 py-4",
-                Button { onclick: move |_| (), "Stop" }
-                Button { "Reload" }
-                if selected_process.read().as_ref().is_some() {
-                    DxProcessOverview { process: selected_process.read().clone().unwrap() }
+                class: "flex flex-row space-between space-x-4 py-4",
+                div {
+                    Button { onclick: move |_| (), "Stop" }
+                    Button { "Reload" }
+                }
+                if process_is_selected() {
+                    DxProcessOverview { process: selected_process }
                 }
             }
         }

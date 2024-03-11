@@ -6,7 +6,7 @@ pub mod ui;
 pub mod system;
 pub mod lasso;
 
-use lasso::ConfigManager;
+use lasso::{ConfigManager, ProcessManager};
 use system::windows::WindowsProcessManager;
 use system::config::YamlConfigManager;
 use ui::launch_app;
@@ -18,7 +18,7 @@ fn main() -> () {
     config_manager.put(config.clone()).unwrap();
 
     let process_manager = WindowsProcessManager::new().unwrap();
-    config.apply(&process_manager).unwrap();
+    process_manager.apply(&config).unwrap();
 
     // dispose config_manager, config, and process_manager
     drop(config_manager);
