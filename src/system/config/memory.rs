@@ -13,6 +13,9 @@ impl MemoryConfigStore {
 }
 
 impl ConfigStore for MemoryConfigStore {
+    fn id (&self) -> &str {
+        "memory"
+    }
     fn get (&self) -> Result<Config, Box<dyn std::error::Error>> {
         Ok(self.config.clone())
     }

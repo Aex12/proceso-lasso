@@ -1,6 +1,6 @@
 use super::Process;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ProcessList {
     processes: Vec<Process>,
 }
@@ -26,6 +26,22 @@ impl Iterator for ProcessList {
 
     fn next (&mut self) -> Option<Self::Item> {
         self.processes.pop()
+    }
+}
+
+impl FromIterator<Process> for ProcessList {
+    fn from_iter<I: IntoIterator<Item=Process>> (iter: I) -> Self {
+        ProcessList {
+            processes: iter.into_iter().collect(),
+        }
+    }
+}
+
+impl<'a> FromIterator<&'a Process> for ProcessList {
+    fn from_iter<I: IntoIterator<Item=&'a Process>> (iter: I) -> Self {
+        ProcessList {
+            processes: iter.into_iter().map(|p| p.clone()).collect(),
+        }
     }
 }
 

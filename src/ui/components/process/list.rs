@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 
-use crate::lasso::Process;
+use crate::lasso::{Process, ProcessList};
 
 #[component]
 pub fn DxProcessLine (process: Process, selected: bool, on_click: EventHandler<()>) -> Element {
@@ -18,12 +18,12 @@ pub fn DxProcessLine (process: Process, selected: bool, on_click: EventHandler<(
 }
 
 #[component]
-pub fn DxProcessList (processes: Signal<Vec<Process>>, selected_process: Signal<Option<Process>>) -> Element {
+pub fn DxProcessList (process_list: Signal<ProcessList>, selected_process: Signal<Option<Process>>) -> Element {
     let mut search_term = use_signal(|| String::from(""));
-    let filtered_processes: ReadOnlySignal<Vec<Process>> = use_memo(move || {
+    let filtered_processes: ReadOnlySignal<ProcessList> = use_memo(move || {
         match search_term.read().as_str() {
-            "" => processes.read().clone(),
-            term @ _ => processes.read().iter().filter(|p| p.name.contains(term)).cloned().collect(),
+            "" => process_list.read().clone(),
+            term @ _ => process_list.read().iter().filter(|p| p.name.contains(term)).collect(),
         }
     });
 
@@ -42,7 +42,7 @@ pub fn DxProcessList (processes: Signal<Vec<Process>>, selected_process: Signal<
                     }
                 }
                 tbody {
-                    for process in filtered_processes.read().clone() {
+                    for process in filtered_processes.read().clone().into_iter() {
                         DxProcessLine {
                             selected: selected_process.read().as_ref().map(|p| p.pid).unwrap_or(-1) == process.pid,
                             process: process.clone(),

@@ -19,6 +19,9 @@ impl YamlConfigStore {
 }
 
 impl ConfigStore for YamlConfigStore {
+    fn id (&self) -> &str {
+        &self.path
+    }
     fn get (&self) -> Result<Config, Box<dyn std::error::Error>> {
         let yaml = fs::read_to_string(&self.path)?;
         let config: Config = serde_yaml::from_str(&yaml).unwrap();

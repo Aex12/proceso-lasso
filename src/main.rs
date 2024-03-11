@@ -6,9 +6,7 @@ pub mod ui;
 pub mod system;
 pub mod lasso;
 
-use lasso::ProcessManager;
-use system::windows::WindowsProcessManager;
-use system::config::create_config_store;
+use system::{create_process_manager, create_config_store};
 use ui::launch_app;
 
 fn main() -> () {
@@ -17,7 +15,7 @@ fn main() -> () {
     // put after get to ensure the file is created if it doesn't exist
     config_store.put(config.clone()).unwrap();
 
-    let process_manager = WindowsProcessManager::new().unwrap();
+    let process_manager = create_process_manager();
     process_manager.apply(&config).unwrap();
 
     // dispose config_manager, config, and process_manager

@@ -7,8 +7,15 @@ pub use memory::MemoryConfigStore;
 use crate::lasso::Config;
 
 pub trait ConfigStore {
+    fn id (&self) -> &str;
     fn get (&self) -> Result<Config, Box<dyn std::error::Error>>;
     fn put (&mut self, config: Config) -> Result<(), Box<dyn std::error::Error>>;
+}
+
+impl PartialEq for dyn ConfigStore {
+    fn eq (&self, _other: &Self) -> bool {
+        self.id() == _other.id()
+    }
 }
 
 pub fn create_config_store (store: &str, path: &str) -> Box<dyn ConfigStore> {
