@@ -6,14 +6,20 @@ pub mod ui;
 pub mod system;
 pub mod lasso;
 
-use system::{create_process_manager, create_config_store};
+use system::{create_config_store, create_process_manager, ConfigStoreError};
 use ui::launch_app;
 
 fn main() -> () {
     let mut config_store = create_config_store("yaml", "config.yaml");
-    let config = config_store.get().unwrap();
-    // put after get to ensure the file is created if it doesn't exist
-    config_store.put(config.clone()).unwrap();
+    let config = match config_store.get() {
+        Ok(config) => config,
+        Err(ConfigStoreError::NotInitialized) => {
+            let conf = lasso::Config::default();
+            config_store.put(conf.clone()).unwrap();
+            conf
+        },
+        Err(err) => panic!("Error reading config: {}", err),
+    };    
 
     let process_manager = create_process_manager();
     process_manager.apply(&config).unwrap();

@@ -11,7 +11,17 @@ presets:
     description: Uses cache cores 0-15 (best for gaming)
     affinity: FFFF
     priority: null
+  None:
+    description: Dont apply any affinity (use system defaults)
+    affinity: null
+    priority: null
 rules:
+- on: NoPath
+  preset: None
+  description: Matches all system processes and leaves them alone
+- on: !Path C:\Windows
+  preset: None
+  description: Matches all windows processes and leaves them alone
 - on: !Path C:\Program Files\Steam\steamapps\common
   preset: Cache
   description: Matches all processes in the Steam common folder

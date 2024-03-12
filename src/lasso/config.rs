@@ -62,7 +62,6 @@ impl Config {
         Ok(())
     }
 
-    
     pub fn find_rule <T: Matchable> (&self, target: &T) -> Option<&Rule> {
         self.rules.iter().find(|rule| rule.matches(target))
     }
@@ -108,7 +107,24 @@ impl Default for Config {
                 ..Preset::default()
             },
         );
+        presets.insert(
+            String::from("None"),
+            Preset {
+                description: Some(String::from("Dont apply any affinity (use system defaults)")),
+                ..Preset::default()
+            },
+        );
         let rules: Vec<Rule> = vec![
+            Rule {
+                on: Matcher::NoPath,
+                preset: String::from("None"),
+                description: Some(String::from("Matches all system processes and leaves them alone"))
+            },
+            Rule {
+                on: Matcher::Path(PathBuf::from("C:\\Windows")),
+                preset: String::from("None"),
+                description: Some(String::from("Matches all windows processes and leaves them alone"))
+            },
             Rule {
                 on: Matcher::Path(PathBuf::from("C:\\Program Files\\Steam\\steamapps\\common")),
                 preset: String::from("Cache"),

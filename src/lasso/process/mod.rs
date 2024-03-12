@@ -34,6 +34,7 @@ impl Matchable for Process {
         match matcher {
             Matcher::Path(p) => self.path.as_ref().map(|path| path.starts_with(p)).unwrap_or(false),
             Matcher::Name(n) => self.name == *n,
+            Matcher::NoPath => self.path.is_none(),
         }
     }
 

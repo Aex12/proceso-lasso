@@ -1,4 +1,4 @@
-use super::{Config, ConfigStore};
+use super::{Config, ConfigStore, ConfigStoreError};
 
 pub struct MemoryConfigStore {
     config: Config,
@@ -16,11 +16,11 @@ impl ConfigStore for MemoryConfigStore {
     fn id (&self) -> &str {
         "memory"
     }
-    fn get (&self) -> Result<Config, Box<dyn std::error::Error>> {
+    fn get (&self) -> Result<Config, ConfigStoreError> {
         Ok(self.config.clone())
     }
 
-    fn put (&mut self, config: Config) -> Result<(), Box<dyn std::error::Error>> {
+    fn put (&mut self, config: Config) -> Result<(), ConfigStoreError> {
         self.config = config;
         Ok(())
     }
