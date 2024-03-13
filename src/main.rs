@@ -5,6 +5,7 @@
 pub mod ui;
 pub mod system;
 pub mod lasso;
+pub mod macros;
 
 use system::{create_config_store, create_process_manager, ConfigStoreError};
 use ui::launch_app;
