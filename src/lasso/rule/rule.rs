@@ -2,7 +2,7 @@
 use std::{fmt::Display, hash::{Hash, Hasher}};
 
 use serde::{Deserialize, Serialize};
-use super::{Matchable, Matcher};
+use super::{Matchable, Matcher, RuleMatch};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Rule {

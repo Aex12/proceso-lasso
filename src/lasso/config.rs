@@ -8,6 +8,7 @@ use serde::{
     Deserialize,
 };
 
+use super::rule::RuleMatch;
 use super::{AffinityMask, Matchable, Matcher, Preset, Rule};
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
@@ -63,11 +64,7 @@ impl Config {
     }
 
     pub fn find_rule <T: Matchable> (&self, target: &T) -> Option<&Rule> {
-        self.rules.iter().find(|rule| rule.matches(target))
-    }
-
-    pub fn find_rules <'s, 't, T: Matchable> (&'s self, target: std::slice::Iter<'_, &'t T>) -> Vec<(&'t T, Option<&'s Rule>)> {
-        target.map(|t| (*t, self.find_rule(*t))).collect()
+        self.rules.iter().find(|rule| target.matches(&rule.on))
     }
 
     pub fn find_preset <T: Matchable> (&self, target: &T) -> (&str, &Preset) {

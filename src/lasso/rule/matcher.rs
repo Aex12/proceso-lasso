@@ -18,3 +18,4 @@ impl Matcher {
         target.matches(self)
     }
 }
+
