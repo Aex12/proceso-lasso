@@ -5,16 +5,23 @@ use serde::{
     Deserialize,
 };
 
+use crate::locals::NUM_CORES;
+
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct AffinityMask(pub usize);
 
 impl AffinityMask {
     pub fn format (&self) -> String {
-        match self.0 {
-            0..=0xFFFF => format!("{:04X}", self.0),
-            0x10000..=0xFFFFFFFF => format!("{:08X}", self.0),
-            _ => format!("{:016X}", self.0),
-        }
+        NUM_CORES.with(|n| match n {
+            0..=4 => format!("{:01X}", self.0),
+            5..=8 => format!("{:02X}", self.0),
+            9..=16 => format!("{:04X}", self.0),
+            17..=32 => format!("{:08X}", self.0),
+            33..=64 => format!("{:016X}", self.0),
+            65..=128 => format!("{:032X}", self.0),
+            129..=256 => format!("{:064X}", self.0),
+            _ => panic!("Too many cores. Nasa has been notified."),
+        })
     }
 }
 
