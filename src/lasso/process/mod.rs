@@ -46,8 +46,4 @@ impl PartialEq for Process {
     }
 }
 
-impl Eq for Process {
-    fn assert_receiver_is_total_eq(&self) {
-        // This is a no-op, but it's required because `Eq` is a marker trait.
-    }
-}
+impl Eq for Process {}

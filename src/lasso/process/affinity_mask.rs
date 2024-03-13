@@ -1,11 +1,11 @@
-use std::fmt;
+use std::{fmt, ops::BitAnd};
 
 use serde::{
     Serialize,
     Deserialize,
 };
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct AffinityMask(pub usize);
 
 impl AffinityMask {
@@ -15,6 +15,26 @@ impl AffinityMask {
             0x10000..=0xFFFFFFFF => format!("{:08X}", self.0),
             _ => format!("{:016X}", self.0),
         }
+    }
+}
+
+impl BitAnd for AffinityMask {
+    type Output = Self;
+
+    fn bitand (self, rhs: Self) -> Self {
+        AffinityMask(self.0 & rhs.0)
+    }
+}
+
+impl From<usize> for AffinityMask {
+    fn from (u: usize) -> Self {
+        AffinityMask(u)
+    }
+}
+
+impl Into<usize> for AffinityMask {
+    fn into (self) -> usize {
+        self.0
     }
 }
 
