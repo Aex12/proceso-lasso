@@ -12,11 +12,11 @@ pub fn App() -> Element {
     let process_list = use_signal(|| process_manager.read().get_process_list().unwrap());
     let config = use_signal(|| config_store.read().get().unwrap());
 
-    use_effect(move || {
+    /*use_effect(move || {
         let process_manager = process_manager.read();
         let config = config.read();
         process_manager.apply(&config).unwrap();
-    });
+    });*/
 
     let selected_process: Signal<Option<Process>> = use_signal(|| None);
 
@@ -32,7 +32,11 @@ pub fn App() -> Element {
                 class: "flex flex-row space-between space-x-4 py-4",
                 div {
                     Button { onclick: move |_| (), "Stop" }
-                    Button { "Reload" }
+                    Button { onclick: move |_| {
+                        let process_manager = process_manager.read();
+                        let config = config.read();
+                        process_manager.apply(&config).unwrap();
+                    }, "Reload" }
                 }
                 if selected_process.read().as_ref().is_some() {
                     DxProcessOverview { process: selected_process }
