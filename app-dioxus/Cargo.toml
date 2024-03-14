@@ -1,0 +1,14 @@
+[package]
+name = "app-dioxus"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "app-dioxus"
+path = "src/main.rs"
+
+[dependencies]
+lib-core = { path = "../lib-core" }
+lib-system = { path = "../lib-system" }
+dioxus = { version = "0.5.0-alpha.0", features = ["desktop"] }
+manganis = "0.1.1"

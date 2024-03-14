@@ -1,4 +1,4 @@
-/target
-/node_modules
-/dist
-/public/tailwind.css
+target
+node_modules
+dist
+tailwind.css

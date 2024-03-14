@@ -1,19 +1,19 @@
 presets:
-  All:
-    description: Uses all cores 0-31
-    affinity: FFFFFFFF
-    priority: null
   Performance:
     description: Uses performance cores 16-31 (best for productivity)
     affinity: FFFF0000
     priority: null
   Cache:
     description: Uses cache cores 0-15 (best for gaming)
-    affinity: FFFF
+    affinity: 0000FFFF
     priority: null
   None:
     description: Dont apply any affinity (use system defaults)
     affinity: null
+    priority: null
+  All:
+    description: Uses all cores 0-31
+    affinity: FFFFFFFF
     priority: null
 rules:
 - on: NoPath

@@ -1,0 +1,53 @@
+import { Button, VerticalBox, HorizontalBox } from "std-widgets.slint";
+import { StandardTableView } from "std-widgets.slint";
+
+export component ProcessTable inherits StandardTableView {
+    columns: [
+        { title: "PID", width: 60px },
+        { title: "Name", width: 150px },
+        { title: "Priority", width: 80px },
+        { title: "Path", width: 350px },
+    ];
+}
+
+export component ButtonTray inherits HorizontalBox {
+    callback request-increase-value();
+    callback request-decrease-value();
+
+    Button {
+        text: "Increase value";
+        clicked => {
+            root.request-increase-value();
+        }
+    }
+    Button {
+        text: "Decrease value";
+        clicked => {
+            root.request-decrease-value();
+        }
+    }
+}
+
+export component AppWindow inherits Window {
+    in-out property <int> counter: 42;
+    in-out property <[[StandardListViewItem]]> processes: [];
+
+    callback request-increase-value();
+    callback request-decrease-value();
+
+    VerticalBox {
+        ProcessTable { rows: root.processes; }
+        Text {
+            horizontal-alignment: left;
+            text: "Counter: \{root.counter}";
+        }
+        ButtonTray {
+            request-increase-value => {
+                root.request-increase-value();
+            }
+            request-decrease-value => {
+                root.request-decrease-value();
+            }
+        }
+    }
+}
