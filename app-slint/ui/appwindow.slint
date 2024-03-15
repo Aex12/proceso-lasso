@@ -10,43 +10,30 @@ export component ProcessTable inherits StandardTableView {
     ];
 }
 
-export component ButtonTray inherits HorizontalBox {
-    callback request-increase-value();
-    callback request-decrease-value();
-
-    Button {
-        text: "Increase value";
-        clicked => {
-            root.request-increase-value();
-        }
-    }
-    Button {
-        text: "Decrease value";
-        clicked => {
-            root.request-decrease-value();
-        }
-    }
-}
-
 export component AppWindow inherits Window {
-    in-out property <int> counter: 42;
     in-out property <[[StandardListViewItem]]> processes: [];
+    in-out property <string> search <=> input.text;
 
-    callback request-increase-value();
-    callback request-decrease-value();
+    callback request-reload();
+    callback search-change();
 
     VerticalBox {
         ProcessTable { rows: root.processes; }
-        Text {
-            horizontal-alignment: left;
-            text: "Counter: \{root.counter}";
-        }
-        ButtonTray {
-            request-increase-value => {
-                root.request-increase-value();
+        HorizontalBox {
+            Text {
+                max-width: 46px;
+                text: "Search: ";
             }
-            request-decrease-value => {
-                root.request-decrease-value();
+            input := TextInput {
+                edited => {
+                    root.search-change();
+                }
+            }
+        }
+        Button {
+            text: "Reload";
+            clicked => {
+                root.request-reload();
             }
         }
     }

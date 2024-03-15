@@ -26,6 +26,10 @@ impl Process {
             priority,
         }
     }
+
+    pub fn path_str (&self) -> String {
+        self.path.clone().map(|p| p.to_str().unwrap().to_owned()).unwrap_or(String::from(""))
+    }
 }
 
 impl Matchable for Process {
